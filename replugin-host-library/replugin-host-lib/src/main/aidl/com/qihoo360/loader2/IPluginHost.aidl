@@ -60,7 +60,7 @@ interface IPluginHost {
 
     void updatePluginInfo(in PluginInfo info);
 
-    PluginInfo pluginDownloaded(String path);
+    PluginInfo pluginDownloaded(String path, String namespace);
 
     boolean pluginUninstalled(in PluginInfo info);
 

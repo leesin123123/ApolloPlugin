@@ -148,7 +148,7 @@ public class PluginInfo implements Serializable, Parcelable, Cloneable {
         put(PI_VER, ver);
     }
 
-    private PluginInfo(String pkgName, String alias, int low, int high, int version, String path, int type) {
+    private PluginInfo(String pkgName, String alias, String namespace, int low, int high, int version, String path, int type) {
         // 如Low、High不正确，则给个默认值（等于应用的“最小支持协议版本”）
         if (low <= 0) {
             low = Constant.ADAPTER_COMPATIBLE_VERSION;
@@ -159,7 +159,7 @@ public class PluginInfo implements Serializable, Parcelable, Cloneable {
 
         put(PI_PKGNAME, pkgName);
         put(PI_ALI, alias);
-        put(PI_NAME, makeName(pkgName, alias));
+        put(PI_NAME, makeName(pkgName, alias, namespace));
         put(PI_LOW, low);
         put(PI_HIGH, high);
 
@@ -198,9 +198,12 @@ public class PluginInfo implements Serializable, Parcelable, Cloneable {
 
     // 通过别名和包名来最终确认插件名
     // 注意：老插件会用到"name"字段，同时出于性能考虑，故必须写在Json中。见调用此方法的地方
-    private String makeName(String pkgName, String alias) {
+    private String makeName(String pkgName, String alias, String namespace) {
         if (!TextUtils.isEmpty(alias)) {
             return alias;
+        }
+        if (!TextUtils.isEmpty(namespace) && !TextUtils.isEmpty(pkgName)) {
+            return namespace + pkgName;
         }
         if (!TextUtils.isEmpty(pkgName)) {
             return pkgName;
@@ -212,7 +215,7 @@ public class PluginInfo implements Serializable, Parcelable, Cloneable {
      * 通过插件APK的MetaData来初始化PluginInfo <p>
      * 注意：框架内部接口，外界请不要直接使用
      */
-    public static PluginInfo parseFromPackageInfo(PackageInfo pi, String path) {
+    public static PluginInfo parseFromPackageInfo(PackageInfo pi, String path, String namespace) {
         ApplicationInfo ai = pi.applicationInfo;
         String pn = pi.packageName;
         String alias = null;
@@ -246,7 +249,7 @@ public class PluginInfo implements Serializable, Parcelable, Cloneable {
             ver = pi.versionCode;
         }
 
-        PluginInfo pli = new PluginInfo(pn, alias, low, high, ver, path, PluginInfo.TYPE_NOT_INSTALL);
+        PluginInfo pli = new PluginInfo(pn, alias, namespace, low, high, ver, path, PluginInfo.TYPE_NOT_INSTALL);
 
         // 获取插件的框架版本号
         pli.setFrameworkVersionByMeta(metaData);
@@ -328,7 +331,7 @@ public class PluginInfo implements Serializable, Parcelable, Cloneable {
      */
     public boolean isUsed() {
         // 注意：该方法不单纯获取JSON中的值，而是根据插件类型（p-n、纯APK）、所处环境（新插件、当前插件）而定
-       if (getParentInfo() != null) {
+        if (getParentInfo() != null) {
             // 若PluginInfo是其它PluginInfo中的PendingUpdate，则返回那个PluginInfo的Used即可
             return getParentInfo().isUsed();
         } else {
@@ -437,15 +440,16 @@ public class PluginInfo implements Serializable, Parcelable, Cloneable {
 
     /**
      * 获取Dex（优化后）生成时所在的目录 <p>
-     *
+     * <p>
      * Android O之前：
      * 若为"纯APK"插件，则会位于app_p_od中；若为"p-n"插件，则会位于"app_plugins_v3_odex"中 <p>
      * 若支持同版本覆盖安装的话，则会位于app_p_c中； <p>
-     *
+     * <p>
      * Android O：
      * APK存放目录/oat/{cpuType}
-     *
+     * <p>
      * 注意：仅供框架内部使用
+     *
      * @return 优化后Dex所在目录的File对象
      */
     public File getDexParentDir() {
@@ -466,13 +470,13 @@ public class PluginInfo implements Serializable, Parcelable, Cloneable {
 
     /**
      * 获取Dex（优化后）所在的文件信息 <p>
-     *
+     * <p>
      * Android O 之前：
      * 若为"纯APK"插件，则会位于app_p_od中；若为"p-n"插件，则会位于"app_plugins_v3_odex"中 <p>
-     *
+     * <p>
      * Android O：
      * APK存放目录/oat/{cpuType}/XXX.odex
-     *
+     * <p>
      * 注意：仅供框架内部使用
      *
      * @return 优化后Dex所在文件的File对象
@@ -502,7 +506,7 @@ public class PluginInfo implements Serializable, Parcelable, Cloneable {
     }
 
     @Deprecated
-    public File getOldNativeLibsDir(){
+    public File getOldNativeLibsDir() {
         // 必须使用宿主的Context对象，防止出现“目录定位到插件内”的问题
         Context context = RePluginInternal.getAppContext();
         File dir;
@@ -746,6 +750,7 @@ public class PluginInfo implements Serializable, Parcelable, Cloneable {
 
     /**
      * 更新插件的所有信息
+     *
      * @param info
      */
     public void updateAll(PluginInfo info) {
@@ -1017,7 +1022,7 @@ public class PluginInfo implements Serializable, Parcelable, Cloneable {
         int low = jo.optInt(PI_LOW, Constant.ADAPTER_COMPATIBLE_VERSION);    // Low应指向最低兼容版本
         int high = jo.optInt(PI_HIGH, Constant.ADAPTER_COMPATIBLE_VERSION);  // High同上
         int ver = jo.optInt(PI_VER);
-        PluginInfo info = new PluginInfo(pkgName, name, low, high, ver, assetName, TYPE_BUILTIN);
+        PluginInfo info = new PluginInfo(pkgName, name, null, low, high, ver, assetName, TYPE_BUILTIN);
 
         // 从 json 中读取 frameVersion（可选）
         int frameVer = jo.optInt("frm");
@@ -1054,7 +1059,7 @@ public class PluginInfo implements Serializable, Parcelable, Cloneable {
 
     // Old Version
     private PluginInfo(String name, int low, int high, int ver, int type, int v5Type, String path, int v5index, int v5offset, int v5length, String v5md5) {
-        this(name, name, low, high, ver, path, type);
+        this(name, name, null, low, high, ver, path, type);
 
         put("v5type", v5Type);
         put("v5index", v5index);
@@ -1202,7 +1207,7 @@ public class PluginInfo implements Serializable, Parcelable, Cloneable {
         return get("v5md5", "");
     }
 
-    ////
+    /// /
 
     private <T> T get(String name, T def) {
         synchronized (mJson) {

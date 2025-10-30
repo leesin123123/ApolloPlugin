@@ -127,9 +127,10 @@ public class PluginManagerServer {
         return mList.cloneList();
     }
 
-    private PluginInfo installLocked(String path) {
+    private PluginInfo installLocked(String path, String namespace) {
         final boolean verifySignEnable = RePlugin.getConfig().getVerifySign();
         final int flags = verifySignEnable ? PackageManager.GET_META_DATA | PackageManager.GET_SIGNATURES : PackageManager.GET_META_DATA;
+
 
         // 1. 读取APK内容
         PackageInfo pi = mContext.getPackageManager().getPackageArchiveInfo(path, flags);
@@ -150,7 +151,7 @@ public class PluginManagerServer {
         }
 
         // 3. 解析出名字和三元组
-        PluginInfo instPli = PluginInfo.parseFromPackageInfo(pi, path);
+        PluginInfo instPli = PluginInfo.parseFromPackageInfo(pi, path, namespace);
         if (LogDebug.LOG) {
             LogDebug.i(TAG, "installLocked: Info=" + instPli);
         }
@@ -172,7 +173,7 @@ public class PluginManagerServer {
             if (checkResult < 0) {
                 RePlugin.getConfig().getEventCallbacks().onInstallPluginFailed(path, RePluginEventCallbacks.InstallResult.VERIFY_VER_FAIL);
                 return null;
-            } else if (checkResult == 0){
+            } else if (checkResult == 0) {
                 instPli.setIsPendingCover(true);
             }
         }
@@ -313,7 +314,7 @@ public class PluginManagerServer {
                 if (LogDebug.LOG) {
                     LogDebug.w(TAG, "updateOrLater: Plugin need update high version. clear PendingDelete and PendingCover.");
                 }
-            } else if (instPli.getVersion() == curPli.getVersion()){
+            } else if (instPli.getVersion() == curPli.getVersion()) {
                 // 同版本覆盖
                 curPli.setPendingCover(instPli);
                 curPli.setPendingDelete(null);
@@ -501,10 +502,10 @@ public class PluginManagerServer {
 
     /**
      * 去掉pn之后，此方法不再使用，应该及时更新p.l中的Path和type
-     * @deprecated
      *
      * @param name
      * @param used
+     * @deprecated
      */
     private void updateUsedLocked(String name, boolean used) {
         final PluginInfo pi = MP.getPlugin(name, false);
@@ -527,7 +528,7 @@ public class PluginManagerServer {
     private void updateUsedLocked(String name, String path, int type, boolean used) {
         final PluginInfo pi = MP.getPlugin(name, false);
         if (LogDebug.LOG) {
-            Log.d(LogDebug.TAG_NO_PN, "prepare to update used  for :" + name + ",pi=" + pi  + ",address=" + System.identityHashCode(pi));
+            Log.d(LogDebug.TAG_NO_PN, "prepare to update used  for :" + name + ",pi=" + pi + ",address=" + System.identityHashCode(pi));
         }
         if (pi == null) {
             return;
@@ -645,7 +646,7 @@ public class PluginManagerServer {
         l.add(pluginName);
 
         if (LogDebug.LOG) {
-            LogDebug.d(TAG, "addToRunningPluginsLocked: Added! pl =" + l +"; map=" + mProcess2PluginsMap);
+            LogDebug.d(TAG, "addToRunningPluginsLocked: Added! pl =" + l + "; map=" + mProcess2PluginsMap);
         }
     }
 
@@ -673,9 +674,9 @@ public class PluginManagerServer {
     private class Stub extends IPluginManagerServer.Stub {
 
         @Override
-        public PluginInfo install(String path) throws RemoteException {
+        public PluginInfo install(String path, String namespace) throws RemoteException {
             synchronized (LOCKER) {
-                return PluginManagerServer.this.installLocked(path);
+                return PluginManagerServer.this.installLocked(path, namespace);
             }
         }
 

@@ -104,6 +104,10 @@ public class RePlugin {
 
     private static RePluginConfig sConfig;
 
+    public static PluginInfo install(String path) {
+        return install(path, null);
+    }
+
     /**
      * 安装或升级此插件 <p>
      * 注意： <p>
@@ -112,11 +116,12 @@ public class RePlugin {
      * 3、此方法是【同步】的，耗时较少 <p>
      * 4、不会触发插件“启动”逻辑，因此只要插件“当前没有被使用”，再次调用此方法则新插件立即生效
      *
-     * @param path 插件安装的地址。必须是“绝对路径”。通常可以用context.getFilesDir()来做
+     * @param path      插件安装的地址。必须是“绝对路径”。通常可以用context.getFilesDir()来做
+     * @param namespace 命名空间 用来隔离相同包名的插件 不需要则传入null
      * @return 安装成功的插件信息，外界可直接读取
      * @since 2.0.0 （1.x版本为installDelayed）
      */
-    public static PluginInfo install(String path) {
+    public static PluginInfo install(String path, String namespace) {
         if (TextUtils.isEmpty(path)) {
             throw new IllegalArgumentException();
         }
@@ -146,7 +151,7 @@ public class RePlugin {
             }
         }
 
-        return MP.pluginDownloaded(path);
+        return MP.pluginDownloaded(path, namespace);
     }
 
     /**
@@ -529,7 +534,7 @@ public class RePlugin {
      *
      * @param pluginName 插件名
      * @param layoutName Layout名字
-     * @param root Optional view to be the parent of the generated hierarchy.
+     * @param root       Optional view to be the parent of the generated hierarchy.
      * @return 插件的View。若为Null则表示获取失败
      * @throws ClassCastException 若不是想要的那个View类型，或者ClassLoader不同，则可能会出现此异常。应确保View类型正确
      * @since 2.2.0
@@ -866,7 +871,7 @@ public class RePlugin {
      * 取消对某个“跳转”类的注册，恢复原状。<p>
      * 请参见 registerHookingClass 的详细说明
      *
-     * @param source   要替换的类的全名
+     * @param source 要替换的类的全名
      * @see #registerHookingClass(String, ComponentName, Class)
      * @since 2.1.6
      */
