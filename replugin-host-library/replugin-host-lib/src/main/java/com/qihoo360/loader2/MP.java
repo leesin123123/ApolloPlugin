@@ -203,7 +203,7 @@ public class MP {
      * @param path
      * @return
      */
-    public static final PluginInfo pluginDownloaded(String path) {
+    public static final PluginInfo pluginDownloaded(String path, String namespace) {
         if (LOG) {
             LogDebug.d(PLUGIN_TAG, "MP.pluginDownloaded ... path=" + path);
         }
@@ -242,7 +242,7 @@ public class MP {
                 }
             }
 
-            PluginInfo info = PluginProcessMain.getPluginHost().pluginDownloaded(path);
+            PluginInfo info = PluginProcessMain.getPluginHost().pluginDownloaded(path, namespace);
             if (info != null) {
                 RePlugin.getConfig().getEventCallbacks().onInstallPluginSucceed(info);
             }
@@ -346,6 +346,7 @@ public class MP {
 
     /**
      * 获取某个插件信息快照。内部框架使用
+     *
      * @return
      */
     public static final PluginInfo getPlugin(String name, boolean clone) {
@@ -437,6 +438,7 @@ public class MP {
     /**
      * 根据 taskAffinity，判断应该取第几组 TaskAffinity
      * 由于 taskAffinity 是跨进程的属性，所以这里要将 taskAffinityGroup 的数据保存在常驻进程中
+     *
      * @param taskAffinity
      * @return 索引值
      */

@@ -59,7 +59,7 @@ public class RePluginInstaller {
         }
 
         // 2. 解析出名字和三元组
-        PluginInfo pli = PluginInfo.parseFromPackageInfo(pi, path);
+        PluginInfo pli = PluginInfo.parseFromPackageInfo(pi, path, null);
         if (pli == null) {
             if (LogDebug.LOG) {
                 LogDebug.e(TAG, "covertToPnFile: MetaData Invalid! Are you define com.qihoo360.plugin.name and others? path=" + path);

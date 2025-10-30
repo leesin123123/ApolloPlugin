@@ -67,12 +67,12 @@ public class PluginLibraryInternalProxy {
     }
 
     /**
-     * @hide 内部方法，插件框架使用
-     * 启动一个插件中的activity
-     * 通过Extra参数IPluginManager.KEY_COMPATIBLE，IPluginManager.KEY_PLUGIN，IPluginManager.KEY_ACTIVITY，IPluginManager.KEY_PROCESS控制
      * @param context Context上下文
      * @param intent
      * @return 插件机制层是否成功，例如没有插件存在、没有合适的Activity坑
+     * @hide 内部方法，插件框架使用
+     * 启动一个插件中的activity
+     * 通过Extra参数IPluginManager.KEY_COMPATIBLE，IPluginManager.KEY_PLUGIN，IPluginManager.KEY_ACTIVITY，IPluginManager.KEY_PROCESS控制
      */
     public boolean startActivity(Context context, Intent intent) {
         if (LOG) {
@@ -123,17 +123,17 @@ public class PluginLibraryInternalProxy {
         ComponentName componentName = intent.getComponent();
         if (componentName != null) {
 
-	        if (LogDebug.LOG) {
-	            LogDebug.d("loadClass", "isHookingClass(" + plugin + "," + componentName.getClassName() + ") = "
-	                    + isDynamicClass(plugin, componentName.getClassName()));
-	        }
-	        if (isDynamicClass(plugin, componentName.getClassName())) {
+            if (LogDebug.LOG) {
+                LogDebug.d("loadClass", "isHookingClass(" + plugin + "," + componentName.getClassName() + ") = "
+                        + isDynamicClass(plugin, componentName.getClassName()));
+            }
+            if (isDynamicClass(plugin, componentName.getClassName())) {
                 intent.putExtra(IPluginManager.KEY_COMPATIBLE, true);
-	            intent.setComponent(new ComponentName(IPC.getPackageName(), componentName.getClassName()));
-	            context.startActivity(intent);
-	            return false;
-	        }
-		}
+                intent.setComponent(new ComponentName(IPC.getPackageName(), componentName.getClassName()));
+                context.startActivity(intent);
+                return false;
+            }
+        }
 
         if (TextUtils.isEmpty(plugin)) {
             // 看下Context是否为Activity，如是则直接从坑位中获取插件名（最准确）
@@ -183,16 +183,17 @@ public class PluginLibraryInternalProxy {
     }
 
     // FIXME 建议去掉plugin和activity参数，直接用intent代替
+
     /**
-     * @hide 内部方法，插件框架使用
-     * 启动一个插件中的activity，如果插件不存在会触发下载界面
-     * @param context 应用上下文或者Activity上下文
+     * @param context  应用上下文或者Activity上下文
      * @param intent
-     * @param plugin 插件名
+     * @param plugin   插件名
      * @param activity 待启动的activity类名
-     * @param process 是否在指定进程中启动
+     * @param process  是否在指定进程中启动
      * @param download 下载
      * @return 插件机制层是否成功，例如没有插件存在、没有合适的Activity坑
+     * @hide 内部方法，插件框架使用
+     * 启动一个插件中的activity，如果插件不存在会触发下载界面
      */
     public boolean startActivity(Context context, Intent intent, String plugin, String activity, int process, boolean download) {
         if (LOG) {
@@ -377,7 +378,7 @@ public class PluginLibraryInternalProxy {
             LogDebug.d(PLUGIN_TAG, "isNeedToDownload(): V5 file exists. Extracting... Plugin = " + plugin);
         }
 
-        PluginInfo i = MP.pluginDownloaded(f.getAbsolutePath());
+        PluginInfo i = MP.pluginDownloaded(f.getAbsolutePath(), null);
         if (i == null) {
             if (LOG) {
                 LogDebug.d(PLUGIN_TAG, "isNeedToDownload(): V5 file is invalid. Plugin = " + plugin);
@@ -392,11 +393,11 @@ public class PluginLibraryInternalProxy {
     }
 
     /**
-     * @hide 内部方法，插件框架使用
-     * 插件的Activity创建成功后通过此方法获取其base context
      * @param activity
      * @param newBase
      * @return 为Activity构造一个base Context
+     * @hide 内部方法，插件框架使用
+     * 插件的Activity创建成功后通过此方法获取其base context
      */
     public Context createActivityContext(Activity activity, Context newBase) {
 //        PluginContainers.ActivityState state = mPluginMgr.mClient.mACM.lookupLastLoading(activity.getClass().getName());
@@ -421,10 +422,10 @@ public class PluginLibraryInternalProxy {
     }
 
     /**
-     * @hide 内部方法，插件框架使用
-     * 插件的Activity的onCreate调用前调用此方法
      * @param activity
      * @param savedInstanceState
+     * @hide 内部方法，插件框架使用
+     * 插件的Activity的onCreate调用前调用此方法
      */
     public void handleActivityCreateBefore(Activity activity, Bundle savedInstanceState) {
         if (LOG) {
@@ -456,10 +457,10 @@ public class PluginLibraryInternalProxy {
     }
 
     /**
-     * @hide 内部方法，插件框架使用
-     * 插件的Activity的onCreate调用后调用此方法
      * @param activity
      * @param savedInstanceState
+     * @hide 内部方法，插件框架使用
+     * 插件的Activity的onCreate调用后调用此方法
      */
     public void handleActivityCreate(Activity activity, Bundle savedInstanceState) {
         if (LOG) {
@@ -547,10 +548,10 @@ public class PluginLibraryInternalProxy {
     }
 
     /**
-     * @hide 内部方法，插件框架使用
-     * 插件的Activity的onRestoreInstanceState调用后调用此方法
      * @param activity
      * @param savedInstanceState
+     * @hide 内部方法，插件框架使用
+     * 插件的Activity的onRestoreInstanceState调用后调用此方法
      */
     public void handleRestoreInstanceState(Activity activity, Bundle savedInstanceState) {
         if (LOG) {
@@ -574,9 +575,9 @@ public class PluginLibraryInternalProxy {
     }
 
     /**
+     * @param activity
      * @hide 内部方法，插件框架使用
      * 插件的Activity的onDestroy调用后调用此方法
-     * @param activity
      */
     public void handleActivityDestroy(Activity activity) {
         if (LOG) {
@@ -616,28 +617,28 @@ public class PluginLibraryInternalProxy {
     }
 
     /**
+     * @param service
      * @hide 内部方法，插件框架使用
      * 插件的Service的onCreate调用后调用此方法
-     * @param service
      */
     public void handleServiceCreate(Service service) {
         mPluginMgr.handleServiceCreated(service);
     }
 
     /**
+     * @param service
      * @hide 内部方法，插件框架使用
      * 插件的Service的onDestroy调用后调用此方法
-     * @param service
      */
     public void handleServiceDestroy(Service service) {
         mPluginMgr.handleServiceDestroyed(service);
     }
 
     /**
-     * @hide 内部方法，插件框架使用
-     * 返回所有插件的json串，格式见plugins-builtin.json文件
      * @param name 插件名，传null或者空串表示获取全部
      * @return
+     * @hide 内部方法，插件框架使用
+     * 返回所有插件的json串，格式见plugins-builtin.json文件
      */
     public JSONArray fetchPlugins(String name) {
         // 先获取List，然后再逐步搞JSON
@@ -655,13 +656,13 @@ public class PluginLibraryInternalProxy {
     }
 
     /**
+     * @param className 壳类名
+     * @param plugin    目标插件名
+     * @param type      目标类的类型: activity, service, provider
+     * @param target    目标类名
+     * @return
      * @hide 内部方法，插件框架使用
      * 登记动态映射的类(6.5.0 later)
-     * @param className 壳类名
-     * @param plugin 目标插件名
-     * @param type 目标类的类型: activity, service, provider
-     * @param target 目标类名
-     * @return
      */
     public boolean registerDynamicClass(String className, String plugin, String type, String target) {
         return mPluginMgr.addDynamicClass(className, plugin, type, target, null);
@@ -784,7 +785,7 @@ public class PluginLibraryInternalProxy {
         if (HostConfigHelper.ACTIVITY_PIT_USE_APPCOMPAT) {
             Class clazz;
             try {
-                if (HostConfigHelper.HOST_USE_ANDROIDX){
+                if (HostConfigHelper.HOST_USE_ANDROIDX) {
                     clazz = ReflectUtils.getClass("androidx.appcompat.R$style");
                 } else {
                     clazz = ReflectUtils.getClass("android.support.v7.appcompat.R$style");

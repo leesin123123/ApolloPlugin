@@ -19,7 +19,7 @@ interface IPluginManagerServer {
      *
      * @return 安装的插件的PluginInfo对象
      */
-    PluginInfo install(String path);
+    PluginInfo install(String path, String namespace);
 
     /**
      * 卸载一个插件

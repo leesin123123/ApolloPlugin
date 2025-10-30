@@ -325,7 +325,7 @@ class PmHostSvc extends IPluginHost.Stub {
     }
 
     @Override
-    public PluginInfo pluginDownloaded(String path) throws RemoteException {
+    public PluginInfo pluginDownloaded(String path, String namespace) throws RemoteException {
         if (LOG) {
             LogDebug.d(PLUGIN_TAG, "pluginDownloaded： path=" + path);
         }
@@ -336,7 +336,7 @@ class PmHostSvc extends IPluginHost.Stub {
         if (fn.startsWith("p-n-") || fn.startsWith("v-plugin-") || fn.startsWith("plugin-s-") || fn.startsWith("p-m-")) {
             pi = pluginDownloadedForPn(path);
         } else {
-            pi = mManager.getService().install(path);
+            pi = mManager.getService().install(path, namespace);
         }
 
         if (pi != null) {
