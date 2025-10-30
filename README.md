@@ -8,13 +8,11 @@ In the meantime, this project continues to advance with optimizations in securit
 
 ## Key Points:
 
-- **Continuation of RePlugin**: Built upon the solid foundation of Qihoo360/RePlugin.
+- **Continuation of RePlugin**: Inherited from the solid foundation of Qihoo360/RePlugin.
 
-- **Current Maintenance Status**: Acknowledges the dormancy of the original project but highlights its stability.
+- **Safe and reliable**: Configure security policies, enhance security activities, and proactively address discovered vulnerabilities.
 
-- **Future Collaboration**: Expresses willingness to reintegrate with the official project if it revives.
-
-- **Enhanced Focus**: Highlights improvements in security and build systems, proactively addressing vulnerabilities.
+- ***Continuous Evolution**: Continuously iterating in areas such as security and reliability, and willing to return to the official community if it resumes activity in the future.
 
 ## Sample Project
 We provide complete sample projects to help you get started quickly:
