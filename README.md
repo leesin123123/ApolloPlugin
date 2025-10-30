@@ -2,6 +2,18 @@
 
 [![Release Version](https://img.shields.io/badge/release-1.0.0-brightgreen.svg)](https://github.com/qqqiver-dot/ApolloPlugin/releases)
 
+ApolloPlugin is a plugin framework for Android that inherits from Qihoo360/RePlugin. While the original RePlugin project has reached a state of minimal maintenance with no active handling of issues or pull requests, it remains a mature and stable framework. If RePlugin resumes active maintenance in the future, we are committed to returning to the official repository and contributing to the community.
+
+In the meantime, this project continues to advance with optimizations in security and build processes, strengthening security capabilities and addressing the latest vulnerability information to ensure the framework remains robust and up-to-date.
+
+## Key Points:
+
+- **Continuation of RePlugin**: Inherited from the solid foundation of Qihoo360/RePlugin.
+
+- **Safe and reliable**: Configure security policies, enhance security activities, and proactively address discovered vulnerabilities.
+
+- ***Continuous Evolution**: Continuously iterating in areas such as security and reliability, and willing to return to the official community if it resumes activity in the future.
+
 ## Sample Project
 We provide complete sample projects to help you get started quickly:
 - [Sample Code](https://github.com/your-org/apollo-plugin/tree/master/apollo-sample)
