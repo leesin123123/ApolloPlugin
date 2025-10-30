@@ -35,7 +35,7 @@ class VariantCompat {
             if (result != null &&
                 (result.getClass().simpleName.contains('Provider') ||
                 result.getClass().name.contains('Provider'))) {
-                // 如果是Provider，调用get()方法
+                // 如果是Provider，则调用get()方法
                 return result.get()
             } else if (result instanceof Task) {
                 // 直接是Task对象
