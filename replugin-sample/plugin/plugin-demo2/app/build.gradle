@@ -22,13 +22,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 34
     buildToolsVersion '28.0.3'
 
     defaultConfig {
         versionName "1.1"
         versionCode 104
-        targetSdkVersion 28
+        targetSdkVersion 34
         applicationId "com.qihoo360.replugin.sample.demo2"
         minSdkVersion 15
         multiDexEnabled false
@@ -67,6 +67,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation "com.qihoo360.replugin:replugin-plugin-lib:${RP_VERSION}"
+    implementation "io.github.starlitwe:apollo-plugin-lib:1.0.1"
 }
 
 if (android.defaultConfig.multiDexEnabled) {
